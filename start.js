@@ -88,14 +88,33 @@ app.post('/api/inputText', function(req, res) {
 
         //Call naar API voor juiste meme
        request.post('https://api.imgflip.com/caption_image?template_id=' + template_id + '&username=robbegoethals&password=cloudapis&text0=&text1=' + textInput, function (error, response, body) {
-            obj = JSON.parse(body);
+          obj = JSON.parse(body);
 
-            if(obj.success == true)
-              console.log("url: " + obj.data.url + "\n");
-            else
+          //als object ontvangen:
+          if(obj.success == true){
+            //maak meme object voor database
+            var meme = {
+              'url': obj.data.url,
+              'original_text': textInput
+            }
+            console.log("url: " + meme.url + "\nmet tekst: " + meme.original_text + "\n");
+
+            //steek dataobject in database
+            db.images.push(meme);
+
+            //toon data in database
+            console.log("      *****db*****\n");
+            for(i = 0; i < db.images.length; i++){
+              console.log("url: " + db.images[i].url + "\noriginal_text: " + db.images[i].original_text + "\n");
+            }
+            console.log("\n      ************");
+          }
+          else{
               console.log("Got no url!\n");
+          }
 
-            //push text & url naar db
+
+
 
            console.log("--------- END ---------\n")
         });

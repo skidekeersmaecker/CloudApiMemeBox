@@ -6,7 +6,7 @@ app.controller("mainControlsController", function($scope, $http, $interval) {
   mainControls.images = [];
 
   // TODO Build functionality to fetch images
-  app.get()
+  //app.get()
 
   // Form behavior
   mainControls.inputText = "";
