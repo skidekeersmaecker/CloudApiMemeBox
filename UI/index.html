@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Meme Box</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="client.js"></script>
+  </head>
+  <body ng-app="memeboxApp" ng-controller="mainControlsController as mainControls">
+    <h1>Meme Box</h1>
+
+    <div class="new_image_form">
+      <h2>New image</h2>
+      <form novalidate>
+        <input type="text" ng-model="mainControls.inputText" placeholder="Troll text" />
+        <input type="submit" ng-click="mainControls.troll()" value="Save" />
+      </form>
+    </div>
+
+    <div class="image-list">
+      <h2>Existing images</h2>
+
+      <div class="image" ng-repeat="image in mainControls.images">
+        <img ng-src="{{ image.url }}" height="300"></img>
+        <div class="caption">{{ image.original_text }}</div>
+      </div>
+    </div>
+
+  </body>
+</html>

@@ -1,0 +1,14 @@
+body {
+  margin: 20px;
+  font-family: "Lucida Console", Monaco, monospace;
+}
+
+.image {
+  display: inline-block;
+  float: left;
+  margin: 20px;
+}
+
+.caption {
+  width: 300px;
+}
