@@ -58,7 +58,7 @@ app.post('/api/inputText', function(req, res) {
         showAllScores();
 
         getEmotionWithHighestScore();
-        chooseTemplateImageForInput();
+        chooseTemplateImageForEmotion();
 
         var meme;
 
@@ -108,7 +108,7 @@ app.post('/api/inputText', function(req, res) {
         console.log("emotie: " + currentEmotion + " with score: " + currentScore + "\n");
     }
 
-    function chooseTemplateImageForInput() {
+    function chooseTemplateImageForEmotion() {
         //template_id = 0;
         switch (currentEmotion) {
             case "anger":
