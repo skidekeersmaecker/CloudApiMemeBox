@@ -30,6 +30,18 @@ var db = {
 
 // TODO Implement REST endpoints here that receive HTTP requests, authorize them and give an appropriate response
 
+//Stuur db naar client
+getDB();
+
+
+function getDB() {
+    app.get("/api/getDb", function (req, res) {
+        res.status(200).json(db);
+    });
+}
+
+
+//Genereer meme op basis van input
 app.post('/api/inputText', function(req, res) {
   var textInput = req.body.text;
 
@@ -113,22 +125,16 @@ app.post('/api/inputText', function(req, res) {
               console.log("Got no url!\n");
           }
 
-
-
+          //post db naar client
+           app.post('http://localhost:3000/api/db', function(req, res) {
+             console("Sent db to client!\n");
+           });
 
            console.log("--------- END ---------\n")
         });
 
 
     });
-
-    /*table.insert(req.body, function(err, result){
-        if(err) throw err;
-        table.find().sort({_id: -1}).toArray(function(err, myArr){
-            if(err) throw err;
-            res.status(201).json(myArr);
-        });
-    });*/
 
 });
 

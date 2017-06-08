@@ -6,7 +6,16 @@ app.controller("mainControlsController", function($scope, $http, $interval) {
   mainControls.images = [];
 
   // TODO Build functionality to fetch images
-  //app.get()
+
+  $http.get("http://localhost:3000/api/getDb").success(function (res) {
+      $scope.db = res;
+
+      console.log("      *****db*****\n");
+      for(i = 0; i < $scope.db.images.length; i++){
+          console.log("url: " + $scope.db.images[i].url + "\noriginal_text: " + $scope.db.images[i].original_text + "\n");
+      }
+      console.log("\n      ************");
+  });
 
   // Form behavior
   mainControls.inputText = "";
