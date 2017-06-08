@@ -45,58 +45,20 @@ function getDB() {
 app.post('/api/inputText', function(req, res) {
   var textInput = req.body.text;
 
+  //alle consoles vormen samen een pakketje met alle info en stappen in de server terminal
   console.log("--------- BEGIN ---------\n")
   console.log("received: " + textInput + "\n");
 
-    request.get('https://watson-api-explorer.mybluemix.net/tone-analyzer/api/v3/tone?text=' + textInput + '&sentences=true&version=2017-06-07.json', function (error, response, body) {
-        /*console.log('error:', error);
-        console.log('statusCode:', response && response.statusCode);
-        console.log('body:', body);*/
 
+
+
+    request.get('https://watson-api-explorer.mybluemix.net/tone-analyzer/api/v3/tone?text=' + textInput + '&sentences=true&version=2017-06-07.json', function (error, response, body) {
         //check alle scores van elke emotie
         obj = JSON.parse(body);
-        console.log(obj.document_tone.tone_categories[0].tones[0].tone_name + ": " + obj.document_tone.tone_categories[0].tones[0].score);
-        console.log(obj.document_tone.tone_categories[0].tones[1].tone_name + ": " + obj.document_tone.tone_categories[0].tones[1].score);
-        console.log(obj.document_tone.tone_categories[0].tones[2].tone_name + ": " + obj.document_tone.tone_categories[0].tones[2].score);
-        console.log(obj.document_tone.tone_categories[0].tones[3].tone_name + ": " + obj.document_tone.tone_categories[0].tones[3].score);
-        console.log(obj.document_tone.tone_categories[0].tones[4].tone_name + ": " + obj.document_tone.tone_categories[0].tones[4].score + "\n");
+        showAllScores();
 
-        //Bepaal welke emotie de hoogste score heeft
-        currentEmotion = "no emotion";
-        currentScore = 0;
-        nextEmotion = obj.document_tone.tone_categories[0].tones[0].tone_name;
-        nextScore = obj.document_tone.tone_categories[0].tones[0].score;
-
-        for (i = 0; i < obj.document_tone.tone_categories[0].tones.length; i++){
-            nextEmotion = obj.document_tone.tone_categories[0].tones[i].tone_id;
-            nextScore = obj.document_tone.tone_categories[0].tones[i].score;
-            if (nextScore > currentScore){
-                currentScore = nextScore;
-                currentEmotion = nextEmotion;
-            }
-        }
-        console.log("emotie: " + currentEmotion + " with score: " + currentScore + "\n");
-
-        //Kies gepaste template_id voor meme afbeelding
-        template_id = 0;
-        switch (currentEmotion){
-            case "anger":
-              template_id = 39123068;
-              break;
-            case "disgust":
-                template_id = 69290504;
-                break;
-            case "fear":
-                template_id = 104947196;
-                break;
-            case "joy":
-                template_id = 59281557;
-                break;
-            case "sadness":
-                template_id = 64245474;
-                break;
-        }
-        console.log("Template id: " + template_id + "\n");
+        getEmotionWithHighestScore();
+        chooseTemplateImageForInput();
 
         //Call naar API voor juiste meme
        request.post('https://api.imgflip.com/caption_image?template_id=' + template_id + '&username=robbegoethals&password=cloudapis&text0=&text1=' + textInput, function (error, response, body) {
@@ -115,11 +77,7 @@ app.post('/api/inputText', function(req, res) {
             db.images.push(meme);
 
             //toon data in database
-            console.log("      *****db*****\n");
-            for(i = 0; i < db.images.length; i++){
-              console.log("url: " + db.images[i].url + "\noriginal_text: " + db.images[i].original_text + "\n");
-            }
-            console.log("\n      ************");
+              showDbData();
           }
           else{
               console.log("Got no url!\n");
@@ -135,6 +93,63 @@ app.post('/api/inputText', function(req, res) {
 
 
     });
+
+    function getEmotionWithHighestScore() {
+        currentEmotion = "no emotion";
+        currentScore = 0;
+        nextEmotion = obj.document_tone.tone_categories[0].tones[0].tone_name;
+        nextScore = obj.document_tone.tone_categories[0].tones[0].score;
+
+        for (i = 0; i < obj.document_tone.tone_categories[0].tones.length; i++) {
+            nextEmotion = obj.document_tone.tone_categories[0].tones[i].tone_id;
+            nextScore = obj.document_tone.tone_categories[0].tones[i].score;
+            if (nextScore > currentScore) {
+                currentScore = nextScore;
+                currentEmotion = nextEmotion;
+            }
+        }
+        console.log("emotie: " + currentEmotion + " with score: " + currentScore + "\n");
+    }
+
+    function chooseTemplateImageForInput() {
+        template_id = 0;
+        switch (currentEmotion) {
+            case "anger":
+                template_id = 39123068;
+                break;
+            case "disgust":
+                template_id = 69290504;
+                break;
+            case "fear":
+                template_id = 104947196;
+                break;
+            case "joy":
+                template_id = 59281557;
+                break;
+            case "sadness":
+                template_id = 64245474;
+                break;
+        }
+        console.log("Template id: " + template_id + "\n");
+    }
+
+    function showAllScores() {
+        if (obj !== null) {
+            console.log(obj.document_tone.tone_categories[0].tones[0].tone_name + ": " + obj.document_tone.tone_categories[0].tones[0].score);
+            console.log(obj.document_tone.tone_categories[0].tones[1].tone_name + ": " + obj.document_tone.tone_categories[0].tones[1].score);
+            console.log(obj.document_tone.tone_categories[0].tones[2].tone_name + ": " + obj.document_tone.tone_categories[0].tones[2].score);
+            console.log(obj.document_tone.tone_categories[0].tones[3].tone_name + ": " + obj.document_tone.tone_categories[0].tones[3].score);
+            console.log(obj.document_tone.tone_categories[0].tones[4].tone_name + ": " + obj.document_tone.tone_categories[0].tones[4].score + "\n");
+        }
+    }
+
+    function showDbData() {
+        console.log("      *****db*****\n");
+        for (i = 0; i < db.images.length; i++) {
+            console.log("url: " + db.images[i].url + "\noriginal_text: " + db.images[i].original_text + "\n");
+        }
+        console.log("\n      ************");
+    }
 
 });
 
