@@ -27,20 +27,31 @@ app.controller("mainControlsController", function($scope, $http, $interval) {
 
     // TODO Then refresh the images, which should now include the new one
     getDB();
-
   };
 
   // TODO Refresh every 3 seconds
   $interval(getDB, 3000);
 
   function getDB() {
-    $http.get("http://localhost:3000/api/getDb").success(function (res) {
-      mainControls.images = res.images;
-      console.log("      *****db*****\n");
-      for (i = 0; i < mainControls.images.length; i++) {
-        console.log("url: " + mainControls.images[i].url + "\noriginal_text: " + mainControls.images[i].original_text + "\n");
-      }
-      console.log("\n      ************");
+  //if (params.access_token) {
+    $http({
+      method: 'GET',
+      url: 'http://localhost:3000/api/getDb'
+    }).then(function (response) {
+      mainControls.images = response.data.images;
+      showDbDataConsole();
+    }, function (err) {
+      $scope.name = err;
     });
+  //}
   }
+
+  function showDbDataConsole() {
+    console.log("      *****db*****\n");
+    for (i = 0; i < mainControls.images.length; i++) {
+      console.log("url: " + mainControls.images[i].url + "\noriginal_text: " + mainControls.images[i].original_text + "\n");
+    }
+    console.log("\n      ************");
+  }
+
 });
