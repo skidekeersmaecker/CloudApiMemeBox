@@ -88,12 +88,6 @@ app.post('/api/inputText', function(req, res) {
 
            console.log("--------- END ---------\n")
        });
-
-       //post db naar client
-       app.post('http://localhost:3000/api/db', function(req, res) {
-         console("Sent db to client!\n");
-       });
-
     });
 
     function getEmotionWithHighestScore() {
@@ -153,6 +147,11 @@ app.post('/api/inputText', function(req, res) {
         console.log("\n      ************");
     }
 
+});
+
+//post db naar client
+app.post('http://localhost:3000/api/db', function(req, res) {
+    console("Sent db to client!\n");
 });
 
 app.listen(3000);
