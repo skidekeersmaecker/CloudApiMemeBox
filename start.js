@@ -53,44 +53,46 @@ app.post('/api/inputText', function(req, res) {
 
 
     request.get('https://watson-api-explorer.mybluemix.net/tone-analyzer/api/v3/tone?text=' + textInput + '&sentences=true&version=2017-06-07.json', function (error, response, body) {
-        //check alle scores van elke emotie
+
         obj = JSON.parse(body);
         showAllScores();
 
         getEmotionWithHighestScore();
         chooseTemplateImageForInput();
 
+        var meme;
         //Call naar API voor juiste meme
        request.post('https://api.imgflip.com/caption_image?template_id=' + template_id + '&username=robbegoethals&password=cloudapis&text0=&text1=' + textInput, function (error, response, body) {
           obj = JSON.parse(body);
 
           //als object ontvangen:
           if(obj.success == true){
+
             //maak meme object voor database
-            var meme = {
+            meme = {
               'url': obj.data.url,
               'original_text': textInput
             }
             console.log("url: " + meme.url + "\nmet tekst: " + meme.original_text + "\n");
-
-            //steek dataobject in database
-            db.images.push(meme);
-
-            //toon data in database
-              showDbData();
           }
           else{
               console.log("Got no url!\n");
           }
 
-          //post db naar client
-           app.post('http://localhost:3000/api/db', function(req, res) {
-             console("Sent db to client!\n");
-           });
+           //steek dataobject in database
+           db.images.push(meme);
+
+           //toon data van database
+           if(db !== null)
+            showDbData();
 
            console.log("--------- END ---------\n")
-        });
+       });
 
+       //post db naar client
+       app.post('http://localhost:3000/api/db', function(req, res) {
+         console("Sent db to client!\n");
+       });
 
     });
 
