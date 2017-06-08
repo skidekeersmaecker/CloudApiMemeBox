@@ -21,20 +21,20 @@ var access_keys = {
 
 var db = {
   images: [
-    {
+    /*{
       'url': 'https://i.imgflip.com/19a9a2.jpg',
       'original_text': 'Judge me by size do you? Good enough for your girlfriend it was.'
-    }
+    }*/
   ]
 };
 
 // TODO Implement REST endpoints here that receive HTTP requests, authorize them and give an appropriate response
 
 //Stuur db naar client
-getDB();
+getDbToClient();
 
 
-function getDB() {
+function getDbToClient() {
     app.get("/api/getDb", function (req, res) {
         res.status(200).json(db);
     });
@@ -50,7 +50,7 @@ app.post('/api/inputText', function(req, res) {
   console.log("received: " + textInput + "\n");
 
 
-
+    var template_id;
 
     request.get('https://watson-api-explorer.mybluemix.net/tone-analyzer/api/v3/tone?text=' + textInput + '&sentences=true&version=2017-06-07.json', function (error, response, body) {
 
@@ -61,6 +61,7 @@ app.post('/api/inputText', function(req, res) {
         chooseTemplateImageForInput();
 
         var meme;
+
         //Call naar API voor juiste meme
        request.post('https://api.imgflip.com/caption_image?template_id=' + template_id + '&username=robbegoethals&password=cloudapis&text0=&text1=' + textInput, function (error, response, body) {
           obj = JSON.parse(body);
@@ -108,7 +109,7 @@ app.post('/api/inputText', function(req, res) {
     }
 
     function chooseTemplateImageForInput() {
-        template_id = 0;
+        //template_id = 0;
         switch (currentEmotion) {
             case "anger":
                 template_id = 39123068;
@@ -150,8 +151,6 @@ app.post('/api/inputText', function(req, res) {
 });
 
 //post db naar client
-app.post('http://localhost:3000/api/db', function(req, res) {
-    console("Sent db to client!\n");
-});
+getDbToClient();
 
 app.listen(3000);
